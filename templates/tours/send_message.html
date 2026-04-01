@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Send Message - TourEase{% endblock %}
+
+{% block content %}
+<div class="bg-emerald-700 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-white">Send Message</h1>
+        <p class="text-emerald-100">Chat with {{ receiver.username }}</p>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-xl shadow-md p-8">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                {{ form.content }}
+            </div>
+            <div class="flex gap-4">
+                <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition">Send Message</button>
+                <a href="{% url 'messages' %}" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

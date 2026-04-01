@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TourEase{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                        <i class="fas fa-plane-departure text-emerald-600 text-2xl"></i>
+                        <span class="text-xl font-bold text-emerald-700">TourEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    {% if not user.is_authenticated or not user.is_provider %}
+                    <a href="{% url 'tour_list' %}" class="text-gray-600 hover:text-emerald-600 transition">Explore Tours</a>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        {% if user.is_provider %}
+                            <a href="{% url 'provider_dashboard' %}" class="text-gray-600 hover:text-emerald-600 transition">Dashboard</a>
+                            <a href="{% url 'create_tour' %}" class="text-gray-600 hover:text-emerald-600 transition">Add Tour</a>
+                        {% else %}
+                            <a href="{% url 'my_bookings' %}" class="text-gray-600 hover:text-emerald-600 transition">My Bookings</a>
+                        {% endif %}
+                        <a href="{% url 'messages' %}" class="text-gray-600 hover:text-emerald-600 transition">Messages</a>
+                        <a href="{% url 'profile' %}" class="text-gray-600 hover:text-emerald-600 transition">Profile</a>
+                        <a href="{% url 'logout' %}" class="text-gray-600 hover:text-emerald-600 transition">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-gray-600 hover:text-emerald-600 transition">Login</a>
+                        <a href="{% url 'register' %}" class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">Get Started</a>
+                    {% endif %}
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-emerald-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            {% if not user.is_authenticated or not user.is_provider %}
+            <a href="{% url 'tour_list' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Explore Tours</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                {% if user.is_provider %}
+                    <a href="{% url 'provider_dashboard' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Dashboard</a>
+                    <a href="{% url 'create_tour' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Add Tour</a>
+                {% else %}
+                    <a href="{% url 'my_bookings' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Bookings</a>
+                {% endif %}
+                <a href="{% url 'messages' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Messages</a>
+                <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Login</a>
+                <a href="{% url 'register' %}" class="block px-4 py-2 text-emerald-600 hover:bg-gray-100">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-50">
+        {% for message in messages %}
+        <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-500 text-white px-6 py-3 rounded-lg shadow-lg mb-2">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-plane-departure text-emerald-400 text-2xl"></i>
+                        <span class="text-xl font-bold">TourEase</span>
+                    </div>
+                    <p class="text-gray-400">Your trusted platform for discovering and booking amazing tours.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{% url 'tour_list' %}" class="hover:text-white">Browse Tours</a></li>
+                        <li><a href="{% url 'register' %}" class="hover:text-white">Become a Provider</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 TourEase. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

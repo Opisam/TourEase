@@ -1,0 +1,8 @@
+[25/Mar/2026 21:15:42] "GET / HTTP/1.1" 200 8893
+[25/Mar/2026 21:17:15] "GET / HTTP/1.1" 200 9666
+[25/Mar/2026 21:17:16] "GET /static/css/output.css HTTP/1.1" 200 25748
+[25/Mar/2026 21:17:16] "GET /media/tour_images/Les_adorables_animaux_africains.jpg HTTP/1.1" 200 61401
+Not Found: /favicon.ico
+[25/Mar/2026 21:17:19] "GET /favicon.ico HTTP/1.1" 404 9816
+[25/Mar/2026 21:17:36] "GET /logout/ HTTP/1.1" 302 0
+[25/Mar/2026 21:17:36] "GET / HTTP/1.1" 200 9105

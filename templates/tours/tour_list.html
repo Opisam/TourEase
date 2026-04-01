@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Tours - TourEase{% endblock %}
+
+{% block content %}
+<div class="bg-emerald-700 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-white mb-4">Explore Tours</h1>
+        <p class="text-emerald-100">Find your perfect adventure</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <aside class="lg:w-1/4">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                <h3 class="font-bold text-lg mb-4">Filters</h3>
+                <form method="GET" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                        <input type="text" name="location" value="{{ request.GET.location|default:'' }}" placeholder="Search location..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tour Type</label>
+                        <select name="tour_type" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="">All Types</option>
+                            <option value="adventure" {% if request.GET.tour_type == 'adventure' %}selected{% endif %}>Adventure</option>
+                            <option value="luxury" {% if request.GET.tour_type == 'luxury' %}selected{% endif %}>Luxury</option>
+                            <option value="budget" {% if request.GET.tour_type == 'budget' %}selected{% endif %}>Budget</option>
+                            <option value="cultural" {% if request.GET.tour_type == 'cultural' %}selected{% endif %}>Cultural</option>
+                            <option value="wildlife" {% if request.GET.tour_type == 'wildlife' %}selected{% endif %}>Wildlife</option>
+                            <option value="beach" {% if request.GET.tour_type == 'beach' %}selected{% endif %}>Beach</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Max Price ($)</label>
+                        <input type="number" name="max_price" value="{{ request.GET.max_price|default:'' }}" placeholder="Any price" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Max Duration (days)</label>
+                        <input type="number" name="duration" value="{{ request.GET.duration|default:'' }}" placeholder="Any duration" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition">Apply Filters</button>
+                    <a href="{% url 'tour_list' %}" class="block text-center text-gray-500 hover:text-gray-700 text-sm">Clear Filters</a>
+                </form>
+            </div>
+        </aside>
+
+        <div class="lg:w-3/4">
+            {% if tours %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for tour in tours %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                    {% if tour.image %}
+                    <img src="{{ tour.image.url }}" alt="{{ tour.title }}" class="w-full h-48 object-cover">
+                    {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-1 rounded">{{ tour.get_tour_type_display }}</span>
+                            <div class="flex items-center text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-600 text-sm ml-1">{{ tour.average_rating }} ({{ tour.review_count }})</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">{{ tour.title }}</h3>
+                        <p class="text-gray-600 text-sm mb-2"><i class="fas fa-map-marker-alt text-emerald-500 mr-1"></i> {{ tour.location }}</p>
+                        <div class="flex items-center text-gray-500 text-sm mb-4">
+                            <span class="mr-4"><i class="fas fa-clock mr-1"></i> {{ tour.duration_days }} days</span>
+                            <span><i class="fas fa-users mr-1"></i> Max {{ tour.max_group_size }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-emerald-600">${{ tour.price }}</span>
+                            <a href="{% url 'tour_detail' tour.id %}" class="text-emerald-600 hover:text-emerald-700 font-medium">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_other_pages %}
+            <div class="mt-8 flex justify-center">
+                <nav class="flex gap-2">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 border rounded-lg hover:bg-gray-100">Previous</a>
+                    {% endif %}
+                    <span class="px-4 py-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 border rounded-lg hover:bg-gray-100">Next</a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500 text-lg">No tours found matching your criteria.</p>
+                <a href="{% url 'tour_list' %}" class="text-emerald-600 hover:underline mt-2 inline-block">Clear filters</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

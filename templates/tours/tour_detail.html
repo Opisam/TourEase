@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tour.title }} - TourEase{% endblock %}
+
+{% block content %}
+<div class="bg-emerald-700 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-white">{{ tour.title }}</h1>
+        <p class="text-emerald-100"><i class="fas fa-map-marker-alt mr-1"></i> {{ tour.location }}</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            {% if tour.image %}
+            <img src="{{ tour.image.url }}" alt="{{ tour.title }}" class="w-full h-96 object-cover rounded-xl mb-8">
+            {% else %}
+            <div class="w-full h-96 bg-gray-200 flex items-center justify-center rounded-xl mb-8">
+                <i class="fas fa-image text-6xl text-gray-400"></i>
+            </div>
+            {% endif %}
+
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">About This Tour</h2>
+                <p class="text-gray-600 whitespace-pre-line">{{ tour.description }}</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Itinerary</h2>
+                <div class="prose max-w-none">
+                    <p class="text-gray-600 whitespace-pre-line">{{ tour.itinerary }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Reviews</h2>
+                {% if reviews %}
+                <div class="space-y-4">
+                    {% for review in reviews %}
+                    <div class="border-b pb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold">{{ review.user.username }}</span>
+                            <div class="flex text-yellow-500">
+                                {% for i in "12345" %}
+                                <i class="fas fa-star{% if forloop.counter <= review.rating %}{% else %} text-gray-300{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-gray-600">{{ review.comment }}</p>
+                        <span class="text-sm text-gray-400">{{ review.created_at|date:"M d, Y" }}</span>
+                        {% if review.provider_response %}
+                        <div class="mt-3 bg-gray-50 border-l-4 border-emerald-500 p-3 rounded">
+                            <p class="text-sm font-semibold text-gray-800 mb-1">Response from Provider:</p>
+                            <p class="text-sm text-gray-600">{{ review.provider_response }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="#" class="text-emerald-600 hover:underline mt-4 inline-block">View all reviews</a>
+                {% else %}
+                <p class="text-gray-500">No reviews yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                <div class="text-center mb-6">
+                    <span class="text-4xl font-bold text-emerald-600">${{ tour.price }}</span>
+                    <span class="text-gray-500">per person</span>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-clock w-6 text-emerald-500"></i>
+                        <span>{{ tour.duration_days }} days</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-users w-6 text-emerald-500"></i>
+                        <span>Max {{ tour.max_group_size }} people</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-tag w-6 text-emerald-500"></i>
+                        <span class="capitalize">{{ tour.tour_type }}</span>
+                    </div>
+                    <div class="flex items-center text-yellow-500">
+                        <i class="fas fa-star w-6"></i>
+                        <span>{{ tour.average_rating }} ({{ tour.review_count }} reviews)</span>
+                    </div>
+                </div>
+
+                {% if booking_form %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="booking_form" value="1">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Travel Date</label>
+                        <input type="date" name="travel_date" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Number of People</label>
+                        <input type="number" name="number_of_people" min="1" max="{{ tour.max_group_size }}" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+                        <textarea name="special_requests" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Any special requirements?"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition font-semibold">
+                        Request Booking
+                    </button>
+                </form>
+                
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <a href="{% url 'messages' %}?user={{ tour.company.id }}" class="w-full block bg-blue-50 text-blue-600 text-center py-3 rounded-lg hover:bg-blue-100 transition font-semibold">
+                        <i class="fas fa-comment mr-2"></i> Message Provider
+                    </a>
+                </div>
+                {% elif user.is_authenticated and is_customer == False %}
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                    <p class="text-yellow-700">Booking is only available for customers.</p>
+                    <p class="text-sm text-yellow-600 mt-1">Switch to a customer account to book tours.</p>
+                </div>
+                {% elif user.is_authenticated %}
+                <a href="{% url 'login' %}" class="block w-full bg-emerald-600 text-white text-center py-3 rounded-lg hover:bg-emerald-700 transition font-semibold">
+                    Login to Book
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="block w-full bg-emerald-600 text-white text-center py-3 rounded-lg hover:bg-emerald-700 transition font-semibold">
+                    Login to Book
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

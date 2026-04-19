@@ -98,3 +98,4 @@ EMAIL_HOST_PASSWORD = 'hcde tbab lclp cuhc' # Replace with your 16-character Goo
 DEFAULT_FROM_EMAIL = 'TourEase <dopio8081@gmail.com>'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+

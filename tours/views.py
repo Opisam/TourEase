@@ -338,3 +338,5 @@ def admin_dashboard(request):
         'total_providers': total_providers,
     }
     return render(request, 'tours/admin_dashboard.html', context)
+
+# Added validation logic placeholder

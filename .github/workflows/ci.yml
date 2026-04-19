@@ -26,7 +26,7 @@ jobs:
 
     - name: ⚙️ Set environment variables
       run: |
-        echo "SECRET_KEY=testsecretkey" >> $GITHUB_ENV
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
         echo "DEBUG=True" >> $GITHUB_ENV
 
     - name: 🗄️ Run migrations

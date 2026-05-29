@@ -1,6 +1,6 @@
 # 🌍 TourEase – Tour & Travel Booking Platform
 
-TourEase is a full-stack web application built with Django that connects customers with tour providers through a streamlined booking request system. The platform enables tour companies to manage listings and bookings while allowing users to discover and request travel experiences بسهولة and efficiently.
+TourEase is a full-stack web application built with Django that connects customers with tour providers through a streamlined booking request system. The platform enables tour companies to manage listings and bookings while allowing users to discover and request travel experiences efficiently.
 
 
 
